@@ -1,0 +1,90 @@
+﻿@using Costumeparty_karinah.Models
+@model string
+@{
+    Layout = null;
+    AjaxOptions ajaxOptions = new AjaxOptions
+    {
+        UpdateTargetId = "tableBody",
+        LoadingElementId = "loading",
+        LoadingElementDuration = 1000,
+        OnSuccess = "processData",
+
+    };
+}
+
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-3.6.3.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+<link href="~/Content/css/StyleSheet1.css" rel="stylesheet" />
+<div class="container">
+    <div class="row">
+        <div class="col-md-5 offset-3">
+            <h2 class="text-center">Fiesta de Carnaval</h2>
+            <div id="loading" style="display:none;color:red">
+                <p>Loading Data....</p>
+            </div>
+            <table class="table table-striped">
+                <thead>
+                    <tr class="tableh">
+                        <th>Nombre</th>
+                        <th>Tematica</th>
+                        <th>Acompañado</th>
+                        <th>Disfraz</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    @Html.Action("GetDisfracesData", new { selectedDisfraz = Model })
+                </tbody>
+            </table>
+            @using (Ajax.BeginForm("GetDisfracesData", ajaxOptions))
+            {
+                <div class="form-group">
+                    @Html.DropDownList("selectedDisfraz", new SelectList(new[] { "Elige un disfraz" }.Concat(Enum.GetNames(typeof(Disfraz)))),
+                         new { @class = "form-control text-center" })
+                    <button type="submit" class="btn btn-secondary mt-2 d-block mx-auto">Ver lista de Disfrces</button>
+                </div>
+            }
+            <div class="container">
+                @foreach (string disfraces in Enum.GetNames(typeof(Disfraz)))
+                {
+                    <div class="btn-group">
+
+                        @Ajax.ActionLink(disfraces, "",
+                                "",
+                                new AjaxOptions
+                                {
+                                    UpdateTargetId = "tableBody",
+                                    LoadingElementId = "loading",
+                                    LoadingElementDuration = 1000,
+                                    Url = Url.Action("GetDisfracesData", new { selectedDisfraz = disfraces }),
+                                    OnSuccess = "processData"
+                                }, new { @class = "btn btn-secondary mb-2  btn-xs btn-block" })
+                    </div>
+
+                }
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-5 offset-3">
+        <hr />
+        <footer>
+            <h6>Ejercicio practico de MVC hecho por Karina Heras </h6>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function processData(data) {
+        var target = $("#tableBody");
+        target.empty();
+        for (var i = 0; i < data.length; i++) {
+            var disfraces = data[i];
+            target.append("<tr><td>" + disfraces.Name
+                + "</td><td>" + disfraces.Theme
+                + "</td><td>" + disfraces.IsAccompanied
+                + "</td><td>" + disfraces.Disfraz + "</td></tr>");
+        }
+    }
+</script>

@@ -1,0 +1,13 @@
+﻿@using Costumeparty_karinah.Models
+@model IEnumerable<Disfraces>
+
+@foreach (Disfraces d in Model)
+{
+    <tr>
+        <td>@d.Name</td>
+        <td>@d.Theme</td>
+        <td>@d.IsAccompanied</td>
+        <td>@d.Disfraz</td>
+    </tr>
+}
+
